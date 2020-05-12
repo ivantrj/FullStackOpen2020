@@ -1,0 +1,16 @@
+browser->server: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa
+server-->browser: spa
+
+
+note over browser:
+browser starts executing js-code
+that requests JSON data from server 
+end note
+
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/data.json
+server-->browser: [{ content:  {"message" : "note created"} }, ...]
+
+note over browser:
+browser executes the event handler
+that renders notes to display
+end note
