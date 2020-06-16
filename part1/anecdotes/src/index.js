@@ -33,6 +33,7 @@ const App = (props) => {
   let largest = Math.max.apply(Math, pointsCopy);
   let mostVotes = (pointsCopy.indexOf(largest));
 
+  
   return (
     <div>
       <Header text="Anecdote of the day"/>
