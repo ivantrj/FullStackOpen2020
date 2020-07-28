@@ -16,7 +16,12 @@ useEffect(() => {
 })
 
 const filteredCountries = countries.filter(country => {
-  return country.name.toLowerCase().includes(search.toLowerCase())
+  let searchedCountries = country.name.toLowerCase().includes(search.toLowerCase())
+  if(searchedCountries > 10) {
+    return "Too many matches, specify another filter"
+  } else {
+    return searchedCountries;
+  }
 })
 
   return (
