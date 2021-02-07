@@ -1,4 +1,4 @@
-# Full Stack Open 2020
+# Full Stack Open 
 
 This is my repository for the Full Stack Open Course projects by the University of Helsinki.
 
