@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import "./App.css";
 import InputField from "./components/InputField";
-import Form from "./components/Form";
+import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import personService from "./services/persons";
-import Notification from "./components/Notification";
+
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -12,7 +11,6 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
   const [filteredPersons, setFilteredPersons] = useState(null);
-  const [notificationMessage, setNotificationMessage] = useState(null);
 
   // Fetch person data from json-server
   useEffect(() => {
@@ -21,11 +19,12 @@ const App = () => {
     });
   }, []);
 
-  const handleNameChange = (event) => {
+
+  const handleNameChange = event => {
     setNewName(event.target.value);
   };
 
-  const handleNumberChange = (event) => {
+  const handleNumberChange = event => {
     setNewNumber(event.target.value);
   };
 
@@ -39,7 +38,7 @@ const App = () => {
     setFilteredPersons(filtered);
   };
 
-  // submit form
+  //submit form
   const addPerson = (event) => {
     event.preventDefault();
     const newPerson = {
@@ -47,11 +46,10 @@ const App = () => {
       number: newNumber,
     };
 
-    // Check if person is already added to the phoneboook.
-    const alreadyExists = persons.filter((person) => person.name === newName);
+    // check if the person si already in the phonebook
+    const alreadyExists = persons.some((person) => person.name === newName);
 
-    // No name provided --> could be handled by displaying an error
-    // For now do nothing.
+    // do nothing
     if (newName === "") {
       return;
     }
@@ -61,50 +59,31 @@ const App = () => {
       const changedPerson = { ...person, number: newNumber };
       const { id } = person;
 
-      // Error handling for if the updated number is too short.
-      if (newNumber < 8) {
-        setNotificationMessage({
-          error: `${newNumber} is too short, please provide a number with at least 8 digits`,
-        });
-        setTimeout(() => {
-          setNotificationMessage(null);
-        }, 5000);
-        return;
-      }
+      //error handling if the new number is too short
 
+
+      //confirm update
       const confirmUpdate = window.confirm(
-        `${newName} is already added to phonebook, replace the old number with a new one?`
+        `${newName} is already added to the phonebook, replace the old number with the new one?`
       );
 
       if (confirmUpdate) {
         personService
           .update(id, changedPerson)
           .then((returnedPerson) => {
-            // Update number in state
+            //update number in state
             setPersons(
               persons.map((person) =>
                 person.id !== id ? person : returnedPerson
               )
             );
 
-            setNotificationMessage({
-              notification: `Updated number for ${person.name}`,
-            });
-            setTimeout(() => {
-              setNotificationMessage(null);
-            }, 5000);
+            //notifications if the person is updated or removed from server
+
+
           })
-          .catch((error) => {
-            setNotificationMessage({
-              error: `Information for ${person.name} has already been removed from server`,
-            });
-            setPersons(persons.filter((p) => p.id !== id));
-            setTimeout(() => {
-              setNotificationMessage(null);
-            }, 5000);
-          });
       }
-      // clear input fields
+      //clear input fields
       setNewName("");
       setNewNumber("");
       return;
@@ -115,24 +94,17 @@ const App = () => {
       .then((returnedPerson) => {
         setPersons(persons.concat(returnedPerson));
 
-        setNotificationMessage({
-          notification: `Added ${returnedPerson.name}`,
-        });
-        setTimeout(() => {
-          setNotificationMessage(null);
-        }, 5000);
+        //notifications that the person is added
 
-        // clear input fields
+        //claer inputs
         setNewName("");
         setNewNumber("");
       })
       .catch((error) => {
-        setNotificationMessage(error.response.data);
-        setTimeout(() => {
-          setNotificationMessage(null);
-        }, 5000);
-      });
+        //notification message
+      })
   };
+
 
   const handleDelete = (id) => {
     const person = persons.find((p) => p.id === id);
@@ -149,19 +121,16 @@ const App = () => {
     }
   };
 
+
+
+
   return (
     <main className="container">
-      <h1>Phonebook</h1>
-      <Notification
-        message={
-          notificationMessage?.notification || notificationMessage?.error
-        }
-        className={notificationMessage?.notification ? "notification" : "error"}
-      />
+      <h2>Phonebook</h2>
 
-      {/* Filter by name */}
+      {/* notification */}
       <InputField
-        label="Filter shown with"
+        label="Filter"
         htmlFor="filter"
         type="text"
         value={filter}
@@ -169,17 +138,18 @@ const App = () => {
       />
 
       <h2>Add a new</h2>
-      <Form
+      <PersonForm
         onSubmit={addPerson}
         newName={newName}
-        handleNameChange={handleNameChange}
         newNumber={newNumber}
+        handleNameChange={handleNameChange}
         handleNumberChange={handleNumberChange}
       />
+
       <h2>Numbers</h2>
       <Persons
-        filter={filter}
         persons={persons}
+        filter={filter}
         filteredPersons={filteredPersons}
         handleDelete={handleDelete}
       />

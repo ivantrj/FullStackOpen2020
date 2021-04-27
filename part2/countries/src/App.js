@@ -1,37 +1,54 @@
-import React, { useState, useEffect } from 'react'
-import Search from './components/Search'
-import Country from './components/Country'
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import CountryInfo from "./components/CountryInfo";
+import Country from "./components/Country";
+import axios from "axios";
 
 const App = () => {
-const [countries, setCountries] = useState([])
-const [search, setSearch] = useState('')
+  const [countries, setCountries] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
-useEffect(() => {
-  axios
-    .get('https://restcountries.eu/rest/v2/all')
-    .then(response => {
-      setCountries(response.data)
-    })
-})
-
-const filteredCountries = countries.filter(country => {
-  let searchedCountries = country.name.toLowerCase().includes(search.toLowerCase())
-  if(searchedCountries > 10) {
-    return "Too many matches, specify another filter"
-  } else {
-    return searchedCountries;
+  const handleChange = event => {
+    setSearchTerm(event.target.value);
   }
-})
+
+  useEffect(() => {
+    axios.get("https://restcountries.eu/rest/v2/all").then((response) => {
+      setCountries(response.data);
+    });
+  });
+
+
+ const countriesToShow = 
+  searchTerm === ""
+    ? []
+    : countries.filter((country) => 
+        country.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+
+  if (countriesToShow.length === 1) {
+    return (
+      <div>
+        Find countries <input onChange={handleChange} />
+        <div>
+          <CountryInfo country={countriesToShow[0]} />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div>
-      <Search search={search} setSearch={setSearch}/>
-      {filteredCountries.map((country) =>
-        <Country country={country} key={country.alpha3Code}/>
-      )}
+      Find countries <input onChange={handleChange} />
+      <div>
+        {countriesToShow.length > 10
+          ? "Too many matches, specify another filter"
+          : countriesToShow.map((country) => 
+            <div key={country.name}>
+                <Country country={country} />
+            </div>)}
+      </div>
     </div>
   );
-}
+};
 
 export default App;

@@ -1,21 +1,27 @@
-import React from 'react'
-import Search from './components/Search'
+import React, { useState } from 'react'
+import CountryInfo from "./CountryInfo"
 
 const Country = ({country}) => {
+    const [show, setShow] = useState(false);
+
+    const handleButtonClick = () => setShow(!show);
+
+    if(show) {
+        return (
+            <div> 
+                {country.name}{" "}
+                <button onClick={handleButtonClick}>{show ? "Hide" : "Show"}</button>
+                <CountryInfo country={country} />
+            </div>
+        );
+    }
+
     return (
         <div>
-            <h2>{country.name}</h2>
-            <p>capital {country.capital}</p>
-            <p>population {country.population}</p>
-            <h3>languages</h3>
-            {/* <ul>
-                {country.languages.map(function(language, index){
-                    return <li key={index}>{language}</li>
-                })}
-            </ul> */}
-            <img src={country.flag} alt={country.name}></img>
+            {country.name}{" "}
+            <button onClick={handleButtonClick}>{show ? "Hide" : "Show"}</button>
         </div>
     )
 }
 
-export default Country
+export default Country;

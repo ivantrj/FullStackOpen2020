@@ -1,68 +1,77 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Solutions for part2 phonebook.
 
-## Available Scripts
+In order to run the code, run the following 2 commands:
+`npm start` (for the front-end)
+`cd part3/phonebook-backend`
+`npm run dev` (to start back-end)
 
-In the project directory, you can run:
+You can find the deployed app here: https://phonebook-backend-2020.herokuapp.com/
 
-### `npm start`
+Exercises of part2 are divided in subparts. You can find the solutions for every subpart in their respective folder.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Exercise part2 phonebook
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+Let's create a simple phonebook. In this part we will be adding names to the phonebook.
+Prevent the user from being able to add names that already exist in the phonebook. Issue a warning with the alert command when such an action is attempted.
+Expand your application by allowing users to add phone numbers to the phone book.
+Implement a search field that can be used to filter the list of people by name.
+Store the initial state of the application in the file db.json. Modify the application such that the initial state of the data is fetched from the server using the axios-library. Complete the fetching with an Effect hook.
 
-### `npm test`
+Currently the numbers that are added to the phonebook are not saved to a backend server. Fix this situation.
+Extract the code that handles the communication with the backend into its own module.
+Make it possible for users to delete entries from the phonebook. The deletion can be done through a dedicated button for each person in the phonebook list. You can confirm the action from the user by using the window.confirm method.
+Change the functionality so that if a number is added to an already existing user, the new number will replace the old number.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Show a notification that lasts for a few seconds after a successful operation is executed (a person is added or a number is changed).
+Open your application in two browsers. If you delete a person in browser 1 a short while before attempting to change the person's phone number in browser 2, you will get an error message in the console. Show the user a message when the operation does not succeed.
 
-### `npm run build`
+More info about the exercises can be found here: https://fullstackopen.com/en/part2/forms and https://fullstackopen.com/en/part2/getting_data_from_server and https://fullstackopen.com/en/part2/altering_data_in_server and https://fullstackopen.com/en/part2/adding_styles_to_react_app
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Notes part2 Getting data from the server
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+**The browser as runtime environment**
+js engines or runtime environments follow asynchronous model. This requires (most) IO-operations to be executed as non-blocking. After async operation is completed, the js engine calls the event handlers registered to the operation. js engines are _single-threaded_. They can't execute code in parallel. If execution of IO-operations would be blocking, the browser would freeze during operations like data fetching.
+Because js is single threaded, computations can't take too long, otherwise the browser can't respond to user interactions.
+With web-workers it's possible to run parallelized code, but the event loop of an individual browser window is still handled by a single thread.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+**Event loop**
+js has 1 thread == 1 call stack == one thing at a time.
+_Concurrency and the event loop:_ One thing at a time, except not really -> the browser is more than just runtime. It also has webapis + event loop. The job of the event look is to look at the stack and the task queue. If the stack is empty, the event loop takes the 1st callback of the queue and pushes it to the stack.
 
-### `npm run eject`
+**Promises**
+A _promise_ is an object representing the eventual completion/failure of an async operation. It can have 3 distinct states.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+1. pending: final value isn't available yet.
+2. fulfilled/resolved -> succesful operation.
+3. rejected -> failed operation.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+To access the result of the operation represented by the promise, an event handler must be registered to the promise, via the _then_ method:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```
+promise.then(response => console.log(response))
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+**Effect-hooks**
+_useEffect_ lets you perform side effects, like data fetching, in functional components.
+It takes 2 parameters:
 
-## Learn More
+1. a function, the effect
+2. dependencies array -> determines when effect is run.
+   By default effects run after every completed render.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Notes part2 Altering data on the server
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+**REST**
+Individual data objects in REST are called _resources_.
+Every _resource_ has a unique address, its url.
+HTTP PUT: _replace_ resource
+HTTP PATCH: change some of the resource properties.
 
-### Code Splitting
+**Promises and errors**
+`.catch` can be used to handle promise rejection.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+```
+.then().catch(error => console.log(error))
+```
 
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+If you place a `.catch` at the end of a _promise chain_, it will be called once any promise in the chain throws an error and the promise becomes rejected.
