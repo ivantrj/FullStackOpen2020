@@ -61,19 +61,8 @@ const App = () => {
       const changedPerson = { ...person, number: newNumber };
       const { id } = person;
 
-      // Error handling for if the updated number is too short.
-      if (newNumber < 8) {
-        setNotificationMessage({
-          error: `${newNumber} is too short, please provide a number with at least 8 digits`,
-        });
-        setTimeout(() => {
-          setNotificationMessage(null);
-        }, 5000);
-        return;
-      }
-
       const confirmUpdate = window.confirm(
-        `${newName} is already added to phonebook, replace the old number with a new one?`
+        `${newName} is already added to phonebook, do you want replace the old number with a new one?`
       );
 
       if (confirmUpdate) {
